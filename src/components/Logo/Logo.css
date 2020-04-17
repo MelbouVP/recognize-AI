@@ -1,0 +1,16 @@
+.Tilt {
+    /* background: linear-gradient(90deg, rgba(174,206,243,1) 0%, rgba(136,119,181,1) 53%, rgba(17,20,77,1) 100%); */
+    background: radial-gradient(circle, rgba(26,230,230,1) 0%, rgba(9,121,106,1) 47%, rgba(2,0,36,1) 100%);
+    padding-top: 0.8rem;
+    margin-left: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+.logo-text {
+    font-family: Arial, sans-serif;
+    color: white;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-top: .3rem;
+}
