@@ -7,9 +7,12 @@ import Rank from './components/Rank/Rank';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import './App.css';
 
+
+// load Clarifai API
 const app = new Clarifai.App({
   apiKey: process.env.REACT_APP_CLARIFAI_KEY
  });
+
 
 class App extends Component {
   constructor(){
@@ -17,54 +20,65 @@ class App extends Component {
     this.state = {
       input: '',
       imageUrl: '',
-      box: {}
+      box: []
     }
   }
 
+  // Method is called for handling the response of Clarifai API
+  detectFaceLocation = (data) => {
+    const detectedFace = data.outputs[0].data.regions.map(el => el.region_info.bounding_box);
 
-
-  calculateFaceLocation = (data) => {
-    const faceBox = data.outputs[0].data.regions[0].region_info.bounding_box;
-    const inputImage = document.getElementById('inputImage');
-    const imageWidth = Number(inputImage.width);
-    const imageHeight = Number(inputImage.height);
-    return {
-      topRow: faceBox.top_row * imageHeight,
-      rightColumn: imageWidth - (faceBox.right_col * imageWidth),
-      bottomRow: imageHeight - (faceBox.bottom_row * imageHeight),
-      leftColumn: faceBox.left_col * imageWidth
-    }
-  }
-
-  detectFace = (boxDimensions) => {
     this.setState({
-      box: boxDimensions
+      box: detectedFace
     })
   }
 
+  // assignFaceLocation = (detectedFace) => {
+  //   this.setState({
+  //     box: detectedFace
+  //   })
+  // }
+
+
+  // receive URL and store it in the state
   onInputChange = (event) => {
     this.setState({input: event.target.value})
   }
 
-  onSubmit = () => {
-  
-  
-  this.setState({
-    imageUrl: this.state.input, 
-    box: {} 
-  });
 
-  app.models
-            .predict("a403429f2ddf4b49b307e318f00e528b", 
-            this.state.input)
-            .then(response => this.detectFace(this.calculateFaceLocation(response)))
-            .catch(err => console.log(err));
-  
-  
+  // URL submission
+  onSubmit = () => {
+
+    // 1. store received input as imageURL in state, which is passed to FaceRecognition component
+    // 2. reset box value which stores detected faces in order to
+    // avoid showing face location boxes of previous URL picture inside of newly uploaded one
+    this.setState({
+      imageUrl: this.state.input, 
+      box: [], 
+    });
+
+    // 1. call Clarifai API by passing callbacks - first callback 
+    // receives Clarifai model ID (Clarfiai.FACE_DETECT_MODEL)
+    // second callback, in this case,  receives the image URL
+    // which comes from this.state.input property since passing this.state.imageURL 
+    // would result in BAD REQUEST as setState() method is asynchrynous 
+    // (Clarifai will run before setState assigned imageURL)
+
+    // 2. Pass the response of clarifai API to the detectFaceLocation() method
+    // to form an array of detected faces
+    // which is stored in the state
+
+    app.models
+              .predict("a403429f2ddf4b49b307e318f00e528b", 
+              this.state.input)
+              .then(response => this.detectFaceLocation(response))
+              .catch(err => console.log(err));
   }
 
-
   render() {
+
+  // Particles parameters that control the look of particles
+  // Particles are used for page background styling
     const particleOptions = {
       particles: {
         number: {
@@ -84,7 +98,7 @@ class App extends Component {
         <Navigation/>
         <Rank />
         <ImageLinkForm onInputChange={this.onInputChange} onSubmit={this.onSubmit} />
-        <FaceRecognition imageUrl={this.state.imageUrl} boxDimensions={this.state.box} />
+        <FaceRecognition imageUrl={this.state.imageUrl} faceBoxLocation={this.state.box} />
       </div>
     );
   }
