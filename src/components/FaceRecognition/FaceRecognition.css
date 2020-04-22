@@ -1,4 +1,6 @@
-
+img {
+    border-radius: 10px;
+}
 
 .face-box {
     position: absolute;
