@@ -24,8 +24,27 @@ class App extends Component {
       imageUrl: '',
       box: [],
       route: 'signIn',
-      isLogged: false
+      isLogged: false,
+      user: {
+        id: '',
+        name: '',
+        email: '',
+        password: '',
+        entries: 0,
+        joined: ''
+      }
     }
+  }
+
+  loadUser = (user) => {
+    this.setState ({
+      // user: {...user}
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      entries: user.entries,
+      joined: user.joined
+    });
   }
 
   // Method is called for handling the response of Clarifai API
@@ -99,7 +118,7 @@ class App extends Component {
   // 1. Methods handles routing in Navigation, SignIn and RegisterForm
   // components. There are 3 routes - 'signIn', 'loggedIn', 'register'.
   // 2. 'loggedIn' route is enabled when user either signs in SignIn component
-  // or registers in RegisterForm component.
+  // or registers in RegisterForm component, renders main page.
   // 2.1 Also sets state's isLogged to (true/false), which is
   // is passed to Navigation component that uses this value to 
   // condionally render, which naviagtion links to show.
@@ -113,6 +132,7 @@ class App extends Component {
 
   onRouteChange = (routeValue) => {
     if(routeValue === 'loggedIn'){
+      console.log(this.state.user)
       this.setState({isLogged: true})
     } else if (routeValue === 'signIn'){
       this.setState({isLogged: false})
@@ -167,7 +187,7 @@ class App extends Component {
                 <SignIn onRouteChange={this.onRouteChange}/>
               </div>
             :
-              <RegisterForm onRouteChange={this.onRouteChange} />
+              <RegisterForm onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
           )
         }
       </div>

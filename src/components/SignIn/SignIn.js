@@ -4,7 +4,11 @@ import React from 'react';
 // 1. SignIn Component is a sign in form, which either redirects 
 // to register page (registrationForm component) if user wants to register
 // or to main page if signed in
+
+
+
 class SignIn extends React.Component {
+    // SignIn component receives prop - onRouteChange method that routes to other components
     constructor(props){
         super(props);
         this.state = {
@@ -13,14 +17,22 @@ class SignIn extends React.Component {
         }
     }
 
+
+    // 1. User's entered email saved to the state
     onEmailChange = (event) => {
         this.setState({signInEmail: event.target.value});
     }
 
+    // 1. User's entered password is saved to state
     onPasswordChange = (event) => {
         this.setState({signInPassword: event.target.value});
     }
 
+
+    // 1. Once user submits sign in form, information is sent to the backend-server
+    // for processing.
+    // 2. If user entered correct user information, then onRouteChange method is called
+    // with value of 'loggedIn' that routes to the main page.
     onSubmitSignIn = () => {
         fetch('http://localhost:3000/signin', {
             method: 'post',
