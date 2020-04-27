@@ -38,17 +38,20 @@ class App extends Component {
 
   loadUser = (user) => {
     this.setState ({
-      // user: {...user}
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      entries: user.entries,
-      joined: user.joined
+      user: {...user}
+      // user: {
+      //   id: user.id,
+      //   name: user.name,
+      //   email: user.email,
+      //   entries: user.entries,
+      //   joined: user.joined
+      // }
     });
   }
 
   // Method is called for handling the response of Clarifai API
   detectFaceLocation = (data) => {
+
     const detectedFace = data.outputs[0].data.regions.map(el => el.region_info.bounding_box);
 
     this.setState({
@@ -76,8 +79,8 @@ class App extends Component {
     // 2. reset box value which stores detected faces in order to
     // avoid showing face location boxes of previous URL picture inside of newly uploaded one
     this.setState({
-      imageUrl: this.state.input, 
-      box: [], 
+        imageUrl: this.state.input, 
+        box: [],
     });
 
     // 1. call Clarifai API by passing callbacks - first callback 
@@ -94,7 +97,30 @@ class App extends Component {
     app.models
               .predict("a403429f2ddf4b49b307e318f00e528b", 
               this.state.input)
-              .then(response => this.detectFaceLocation(response))
+              .then(CLARIFAIresponse => {
+                if(CLARIFAIresponse) {
+                  fetch('http://localhost:3000/image', {
+                    method: 'put',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        id: this.state.user.id
+                    })
+                  })
+                  .then(response => response.json())
+                  .then(count => {
+                    this.setState(prevState => {
+                      return {
+                        user: {
+                          ...prevState.user,
+                          entries: count
+                        }
+                      }
+                    })
+                  })
+                }
+
+                this.detectFaceLocation(CLARIFAIresponse)
+              })
               .catch(err => console.log(err));
   }
 
@@ -132,8 +158,7 @@ class App extends Component {
 
   onRouteChange = (routeValue) => {
     if(routeValue === 'loggedIn'){
-      console.log(this.state.user)
-      this.setState({isLogged: true})
+      this.setState({isLogged: true, box: [], imageUrl: ''})
     } else if (routeValue === 'signIn'){
       this.setState({isLogged: false})
     } 
@@ -173,7 +198,7 @@ class App extends Component {
         <Navigation onRouteChange={this.onRouteChange} isLogged={this.state.isLogged} />
         {this.state.route === 'loggedIn' ?
           <div>
-            <Rank />
+            <Rank name={this.state.user.name} entries={this.state.user.entries} />
             <ImageLinkForm onInputChange={this.onInputChange} onSubmit={this.onSubmit} />
             <FaceRecognition imageUrl={this.state.imageUrl} faceBoxLocation={this.state.box} />
           </div>
@@ -184,7 +209,7 @@ class App extends Component {
                 <h2>
                     Recognize-AI will detect faces in pictures that you have linked.
                 </h2>
-                <SignIn onRouteChange={this.onRouteChange}/>
+                <SignIn onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
               </div>
             :
               <RegisterForm onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
