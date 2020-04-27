@@ -31,7 +31,9 @@ class SignIn extends React.Component {
 
     // 1. Once user submits sign in form, information is sent to the backend-server
     // for processing.
-    // 2. If user entered correct user information, then onRouteChange method is called
+    // 2. If user entered correct user information, then loadUser method is called which
+    // loads user's data into the App's state,
+    // and onRouteChange method is called
     // with value of 'loggedIn' that routes to the main page.
     onSubmitSignIn = () => {
         fetch('http://localhost:3000/signin', {
@@ -43,9 +45,12 @@ class SignIn extends React.Component {
             })
         })
             .then(response => response.json())
-            .then( data => {
-                data === 'Success' && this.props.onRouteChange('loggedIn')
-            })
+            .then( user => {
+                if(user.id){
+                    this.props.loadUser(user);
+                    this.props.onRouteChange('loggedIn')
+                }
+            });
     }
 
     render() {
