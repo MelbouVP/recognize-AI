@@ -94,9 +94,14 @@ class App extends Component {
     // to form an array of detected faces
     // which is stored in the state
 
-    app.models
-              .predict("a403429f2ddf4b49b307e318f00e528b", 
-              this.state.input)
+    fetch('http://localhost:3000/imageurl', {
+                method: 'post',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    input: this.state.input
+                })
+              })
+              .then(response => response.json())
               .then(CLARIFAIresponse => {
                 if(CLARIFAIresponse) {
                   fetch('http://localhost:3000/image', {
@@ -117,6 +122,7 @@ class App extends Component {
                       }
                     })
                   })
+                  .catch(console.log)
                 }
 
                 this.detectFaceLocation(CLARIFAIresponse)
