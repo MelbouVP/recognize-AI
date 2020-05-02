@@ -42,8 +42,10 @@ class RegisterForm extends React.Component {
         })
             .then(response => response.json())
             .then( user => {
-                this.props.loadUser(user)
-                user && this.props.onRouteChange('loggedIn')
+                if(user.id){
+                    this.props.loadUser(user)
+                    user && this.props.onRouteChange('loggedIn')
+                }
             })
     }
 

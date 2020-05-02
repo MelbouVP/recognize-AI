@@ -32,9 +32,9 @@ const FaceRecognition = ({ imageUrl, faceBoxLocation }) => {
     //5. Map through face box dimension(-s) and assign them to a div styling,\
     // therefore displaying detected faces in the image
 
-    const faceList = faceBoxDimensions.map(dimensions => {
+    const faceList = faceBoxDimensions.map((dimensions, index) => {
         return (
-            <div className='face-box' style={dimensions}></div>
+            <div className='face-box' style={dimensions} key={index}></div>
         )
     })
 
