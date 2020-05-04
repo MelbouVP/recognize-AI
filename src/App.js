@@ -1,19 +1,13 @@
 import React, { Component } from 'react';
-import Clarifai from 'clarifai';
 import Particles from 'react-particles-js'
 import Navigation from './components/Navigation/Navigation';
+import Profile from './components/Profile/Profile';
 import SignIn from './components/SignIn/SignIn';
 import RegisterForm from './components/RegisterForm/RegisterForm'
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm'
 import Rank from './components/Rank/Rank';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import './App.css';
-
-
-// load Clarifai API
-const app = new Clarifai.App({
-  apiKey: process.env.REACT_APP_CLARIFAI_KEY
- });
 
 
 class App extends Component {
@@ -25,6 +19,8 @@ class App extends Component {
       box: [],
       route: 'signIn',
       isLogged: false,
+      checkProfile: false,
+      profileDeleted: false,
       user: {
         id: '',
         name: '',
@@ -38,7 +34,9 @@ class App extends Component {
 
   loadUser = (user) => {
     this.setState ({
-      user: {...user}
+      user: {
+        ...user,
+      }
       // user: {
       //   id: user.id,
       //   name: user.name,
@@ -78,56 +76,60 @@ class App extends Component {
     // 1. store received input as imageURL in state, which is passed to FaceRecognition component
     // 2. reset box value which stores detected faces in order to
     // avoid showing face location boxes of previous URL picture inside of newly uploaded one
-    this.setState({
-        imageUrl: this.state.input, 
-        box: [],
-    });
-
-    // 1. call Clarifai API by passing callbacks - first callback 
-    // receives Clarifai model ID (Clarfiai.FACE_DETECT_MODEL)
-    // second callback, in this case,  receives the image URL
-    // which comes from this.state.input property since passing this.state.imageURL 
-    // would result in BAD REQUEST as setState() method is asynchrynous 
-    // (Clarifai will run before setState assigned imageURL)
-
-    // 2. Pass the response of clarifai API to the detectFaceLocation() method
-    // to form an array of detected faces
-    // which is stored in the state
-
-    fetch('http://localhost:3000/imageurl', {
-                method: 'post',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    input: this.state.input
+    
+    if(this.state.input.length !== 0) {
+      this.setState({
+          imageUrl: this.state.input, 
+          box: [],
+      });
+  
+      // 1. call Clarifai API by passing callbacks - first callback 
+      // receives Clarifai model ID (Clarfiai.FACE_DETECT_MODEL)
+      // second callback, in this case,  receives the image URL
+      // which comes from this.state.input property since passing this.state.imageURL 
+      // would result in BAD REQUEST as setState() method is asynchrynous 
+      // (Clarifai will run before setState assigned imageURL)
+  
+      // 2. Pass the response of clarifai API to the detectFaceLocation() method
+      // to form an array of detected faces
+      // which is stored in the state
+  
+      fetch('http://localhost:3000/imageurl', {
+                  method: 'post',
+                  headers: {'Content-Type': 'application/json'},
+                  body: JSON.stringify({
+                      input: this.state.input
+                  })
                 })
-              })
-              .then(response => response.json())
-              .then(CLARIFAIresponse => {
-                if(CLARIFAIresponse) {
-                  fetch('http://localhost:3000/image', {
-                    method: 'put',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        id: this.state.user.id
+                .then(response => response.json())
+                .then(CLARIFAIresponse => {
+                  if(CLARIFAIresponse) {
+                    fetch('http://localhost:3000/image', {
+                      method: 'put',
+                      headers: {'Content-Type': 'application/json'},
+                      body: JSON.stringify({
+                          id: this.state.user.id
+                      })
                     })
-                  })
-                  .then(response => response.json())
-                  .then(count => {
-                    this.setState(prevState => {
-                      return {
-                        user: {
-                          ...prevState.user,
-                          entries: count
+                    .then(response => response.json())
+                    .then(count => {
+                      this.setState(prevState => {
+                        return {
+                          user: {
+                            ...prevState.user,
+                            entries: count
+                          }
                         }
-                      }
+                      })
                     })
-                  })
-                  .catch(console.log)
-                }
-
-                this.detectFaceLocation(CLARIFAIresponse)
-              })
-              .catch(err => console.log(err));
+                    .catch(console.log)
+                  }
+  
+                  this.detectFaceLocation(CLARIFAIresponse)
+                })
+                .catch(err => console.log(err));
+    }
+    
   }
 
 
@@ -164,15 +166,33 @@ class App extends Component {
 
   onRouteChange = (routeValue) => {
     if(routeValue === 'loggedIn'){
-      this.setState({isLogged: true, box: [], imageUrl: ''})
+      this.setState({isLogged: true, box: [], imageUrl: '', checkProfile: false})
     } else if (routeValue === 'signIn'){
-      this.setState({isLogged: false})
-    } 
-    // else if (routeValue === 'register'){
-    //   this.setState({isLogged: false})
-    // }
+      this.setState({isLogged: false, checkProfile: false})
+    }
 
     this.setState({route: routeValue})
+  }
+
+  loadProfile = () => {
+    this.setState({ checkProfile: true})
+  }
+
+  deleteProfile = () => {
+    fetch(`http://localhost:3000/profile/${this.state.user.id}`, {
+                method: 'delete',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                  email: this.state.user.email
+              })
+          })
+          .then(response => response.json())
+          .then(response => {
+            if(response === 'User deleted'){
+              this.setState({profileDeleted: true})
+              setTimeout(() => this.onRouteChange('signIn'), 3000)
+            }
+          })
   }
 
   render() {
@@ -201,13 +221,19 @@ class App extends Component {
     return (
       <div className="App">
         <Particles className='particles' params={particleOptions}/>
-        <Navigation onRouteChange={this.onRouteChange} isLogged={this.state.isLogged} />
+        <Navigation onRouteChange={this.onRouteChange} isLogged={this.state.isLogged} loadProfile={this.loadProfile} />
         {this.state.route === 'loggedIn' ?
-          <div>
-            <Rank name={this.state.user.name} entries={this.state.user.entries} />
-            <ImageLinkForm onInputChange={this.onInputChange} onSubmit={this.onSubmit} />
-            <FaceRecognition imageUrl={this.state.imageUrl} faceBoxLocation={this.state.box} />
-          </div>
+          (!this.state.checkProfile ? 
+              <div>
+                <Rank name={this.state.user.name} entries={this.state.user.entries} />
+                <ImageLinkForm onInputChange={this.onInputChange} onSubmit={this.onSubmit} />
+                <FaceRecognition imageUrl={this.state.imageUrl} faceBoxLocation={this.state.box} />
+              </div>
+            :
+              <div>
+                <Profile onRouteChange={this.onRouteChange} deleteProfile={this.deleteProfile} user={this.state.user} profileDeleted={this.state.profileDeleted} />
+              </div>
+          )
         :
           (
             this.state.route === 'signIn' ?

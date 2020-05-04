@@ -1,0 +1,63 @@
+
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 99;
+    background: #000;
+    pointer-events: none;
+    opacity: 0;
+    -webkit-transform: scale(0.5);
+            transform: scale(0.5);
+}
+
+input[type="checkbox"]:checked ~ .overlay {
+    pointer-events: auto;
+    opacity: 0.9;
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    -webkit-transition: transform 0.5s ease opacity 0.5s ease;
+            transition: transform 0.5s ease opacity 0.5s ease;
+    
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 100;
+    -webkit-transform: translate(-50%, -50%) scale(0.5);
+            transform: translate(-50%, -50%) scale(0.5);
+    width: 100%;
+    max-width: 450px;
+    pointer-events: none;
+    opacity: 0;
+}
+
+input[type='checkbox']:checked ~ .modal {
+    pointer-events: auto;
+    opacity: 1;
+    -webkit-transform: translate(-50%, -50%) scale(1);
+            transform: translate(-50%, -50%) scale(1);
+    -webkit-transition: transform 0.5s ease, opacity 0.5s ease;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+    transition-delay: 0.1s;
+}
+
+.modal__content {
+    display: block;
+    padding: 50px;
+    background: #fff;
+    border-radius: 10px;
+}
+
+.deleteBtn {
+    display: inline-block;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 20px;
+    border: 1px solid black;
+}

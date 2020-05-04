@@ -1,7 +1,7 @@
 import React from 'react';
 import Logo from './../Logo/Logo';
 
-const Navigation = ( { onRouteChange, isLogged }) => {
+const Navigation = ( { onRouteChange, isLogged, loadProfile }) => {
     const navStyle = {
         display: 'flex', 
         justifyContent: 'space-between', 
@@ -25,9 +25,17 @@ const LoggedStyle = {
             { isLogged === true ?
                 <div style={LoggedStyle}>
                     <p 
+                    onClick={loadProfile}
+                    className='f3 link dim white underline pa3 pointer' 
+                    > 
+                        Profile 
+                    </p>
+                    <p 
                     onClick={() => onRouteChange('signIn')}
                     className='f3 link dim white underline pa3 pointer' 
-                    > Sign out </p>
+                    > 
+                        Sign out 
+                    </p>
                 </div>
             :
                 <div style={LoggedStyle}>
