@@ -13,7 +13,8 @@ class SignIn extends React.Component {
         super(props);
         this.state = {
             signInEmail: '',
-            signInPassword: ''
+            signInPassword: '',
+            CredentialError: false
         }
     }
 
@@ -36,38 +37,61 @@ class SignIn extends React.Component {
     // and onRouteChange method is called
     // with value of 'loggedIn' that routes to the main page.
     onSubmitSignIn = () => {
-        fetch('http://localhost:3000/signin', {
-            method: 'post',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                email: this.state.signInEmail,
-                password: this.state.signInPassword
+        const regex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(.\w{2,3})+$/;
+        if(regex.test(this.state.signInEmail) && this.state.signInPassword.length >= 8) {
+            fetch('http://localhost:3000/signin', {
+                method: 'post',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    email: this.state.signInEmail,
+                    password: this.state.signInPassword
+                })
             })
-        })
-            .then(response => response.json())
-            .then( user => {
-                if(user.id){
-                    this.props.loadUser(user);
-                    this.props.onRouteChange('loggedIn')
-                }
-            });
+                .then(response => response.json())
+                .then( user => {
+                    console.log(user)
+                    if(user.id){
+                        this.props.loadUser(user);
+                        this.props.onRouteChange('loggedIn')
+                    } else {
+                        this.validateSignIn()
+                    }
+                });
+        } else {
+            this.validateSignIn()
+        }
+    }
+
+    validateSignIn = () => {
+        this.setState({
+            CredentialError: true,
+            signInEmail: '',
+            signInPassword: ''
+          }, () => {
+            setTimeout( () => {
+                this.setState({
+                    CredentialError: false
+                })
+            }, 4000)
+          });
     }
 
     render() {
         const { onRouteChange } = this.props;
         return (
             <article className="br3 shadow-3 ba dark-gray b--black-10 mv3 w-100 w-50-m w-25-l mw6 center">
-                <main className="pa4 black-80">
+                <main className="pa3 black-80">
                     <div className="measure">
                         <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
                         <legend className="f2 fw6 ph0 mh0">Sign In</legend>
-                        <div className="mt3">
+                        <div className="mt1">
                             <label className="db fw6 lh-copy f6" htmlFor="email-address">Email</label>
                             <input 
                             className="br3 pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" 
                             type="email" 
                             name="email-address"  
                             id="email-address"
+                            value={this.state.signInEmail}
                             onChange={this.onEmailChange}
                             />
                         </div>
@@ -78,9 +102,11 @@ class SignIn extends React.Component {
                             type="password" 
                             name="password"  
                             id="password"
+                            value={this.state.signInPassword}
                             onChange={this.onPasswordChange}
                             />
                         </div>
+                        {this.state.CredentialError && <div className='white pa1'>Invalid email and/or password.</div>}
                         </fieldset>
                         <div className="">
                         <input onClick={this.onSubmitSignIn} className="br2 b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" type="submit" value="Sign in" />

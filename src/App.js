@@ -166,7 +166,7 @@ class App extends Component {
 
   onRouteChange = (routeValue) => {
     if(routeValue === 'loggedIn'){
-      this.setState({isLogged: true, box: [], imageUrl: '', checkProfile: false})
+      this.setState({isLogged: true, box: [], imageUrl: '', profileDeleted: false, checkProfile: false})
     } else if (routeValue === 'signIn'){
       this.setState({isLogged: false, checkProfile: false})
     }
