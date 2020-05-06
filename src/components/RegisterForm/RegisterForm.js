@@ -53,6 +53,8 @@ class RegisterForm extends React.Component {
                     if(user.id){
                         this.props.loadUser(user)
                         user && this.props.onRouteChange('loggedIn')
+                    } else {
+                        this.validateRegistration('Invalid email adress.')
                     }
                 })
         } else if(this.state.name.length < 4) {

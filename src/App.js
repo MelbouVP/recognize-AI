@@ -77,7 +77,7 @@ class App extends Component {
     // 2. reset box value which stores detected faces in order to
     // avoid showing face location boxes of previous URL picture inside of newly uploaded one
     
-    if(this.state.input.length !== 0) {
+    if(this.state.input.length > 15) {
       this.setState({
           imageUrl: this.state.input, 
           box: [],
@@ -103,7 +103,7 @@ class App extends Component {
                 })
                 .then(response => response.json())
                 .then(CLARIFAIresponse => {
-                  if(CLARIFAIresponse) {
+                  if(CLARIFAIresponse !== 'Unable to work with API') {
                     fetch('http://localhost:3000/image', {
                       method: 'put',
                       headers: {'Content-Type': 'application/json'},
@@ -123,9 +123,9 @@ class App extends Component {
                       })
                     })
                     .catch(console.log)
+                    this.detectFaceLocation(CLARIFAIresponse)
                   }
   
-                  this.detectFaceLocation(CLARIFAIresponse)
                 })
                 .catch(err => console.log(err));
     }
