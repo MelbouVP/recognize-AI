@@ -31,7 +31,7 @@ const Profile = ({deleteProfile, profileDeleted, onRouteChange, user}) => {
                                         </div>
                                         </fieldset>
                                         
-                                        <input type='checkbox' id='click' style={{display: 'none'}} />
+                                        <input type='checkbox' id='click' style="display: none" />
                                         <label className='button' htmlFor='click' >
                                             <p className='f4 fw8 button-theme link'> Delete profile </p>
                                         </label>
