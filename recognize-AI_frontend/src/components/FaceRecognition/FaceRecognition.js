@@ -18,6 +18,7 @@ const FaceRecognition = ({ imageUrl, faceBoxLocation }) => {
 
     const faceBoxDimensions = faceBoxLocation.map(el => {
         const inputImage = document.getElementById('inputImage');
+        if(inputImage === null) return
         const imageWidth = Number(inputImage.width);
         const imageHeight = Number(inputImage.height);
 
