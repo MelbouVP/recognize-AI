@@ -7,6 +7,7 @@ Application live-demo can be seen at @@@@@
 ## Table of contents 
 * [Introduction](#introduction)
 * [Technologies](#technologies)
+* [Features](#features)
 * [Project status](#project-status)
 
 ## Introduction
@@ -26,6 +27,14 @@ Besides core functionality, this application has a database that allows for user
 * **Knex.js** (v. 0.21.1) - ORM query builder
 * **Clarifai** (v. 2.9.1) - face recognition API
 * **Utility tech** - bcrypt, cookie-parser, cors, dotenv, nodemon
+
+## Features
+
+![](sdaw)
+1. Image recognition
+2. User signup & validation
+3. User login & validation
+4. Account deletion
 
 ## Project status
 
