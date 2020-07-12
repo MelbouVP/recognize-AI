@@ -2,7 +2,9 @@
 
 Recognize AI is an application that can detect human faces in an image based on the user's input image.
 
-Application live-demo can be seen at @@@@@
+<img src="https://github.com/MelbouVP/recognize-AI/blob/master/readme_assets/RecognizeAI-2.png" />
+
+**Application live-demo can be seen at @@@@@**
 
 ## Table of contents 
 * [Introduction](#introduction)
@@ -30,11 +32,43 @@ Besides core functionality, this application has a database that allows for user
 
 ## Features
 
-![](sdaw)
-1. Image recognition
-2. User signup & validation
-3. User login & validation
-4. Account deletion
+**1. Image recognition**
+
+<p align="center">
+  <img src="https://github.com/MelbouVP/recognize-AI/blob/master/readme_assets/Recognize-core-functionality.gif" width="550" height="350"/>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <img src="https://github.com/MelbouVP/recognize-AI/blob/master/readme_assets/Recognize-core-functionality2.gif" width="550" height="350"/>
+</p>
+<br/>
+<br/>
+
+**2. User signup & validation**
+<br/>
+<br/>
+<p align="center">
+  <img src="https://github.com/MelbouVP/recognize-AI/blob/master/readme_assets/Signup-validation8.gif" width="450" height="350"/>
+</p>
+<br/>
+<br/>
+
+**3. User login & validation**
+<br/>
+<br/>
+<p align="center">
+  <img src="https://github.com/MelbouVP/recognize-AI/blob/master/readme_assets/Login-validation.gif" width="450" height="350"/>
+</p>
+<br/>
+<br/>
+
+**4. Account deletion**
+<br/>
+<br/>
+<p align="center">
+  <img src="https://github.com/MelbouVP/recognize-AI/blob/master/readme_assets/Account-deletion.gif" width="450" height="350"/>
+</p>
 
 ## Project status
 
