@@ -5,6 +5,7 @@ const app = new Clarifai.App({
     apiKey: process.env.CLARIFAI_KEY
 });
 
+// use Clarifai API face detection model to predict face location in provided image
 const handleApiCall = (req, res) => {
     app.models
         .predict("a403429f2ddf4b49b307e318f00e528b", req.body.input)
