@@ -4,14 +4,20 @@ require('dotenv').config({ path: '../env' });
 
 const handleSignIn = (req, res, db, bcrypt) => {
 
+        // User data validation
         const { email, password } = req.body;
         const regex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(.\w{2,3})+$/;
         if(regex.test(email) && password.length >= 8) {
+
+            // Once validated, select User from the database
             db.select('email', 'hash').from('login')
             .where('email', '=', email)
             .then(data => {
+                // Check if passowrd is valid
                 const isValid = bcrypt.compareSync(password, data[0].hash);
                 if(isValid){
+                    // if password is valid, select the user
+                    // return user data for fetch endpoint
                     return db.select('*').from('users')
                     .where('email', '=', email)
                     .then(user => {
