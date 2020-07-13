@@ -4,7 +4,7 @@ Recognize AI is an application that can detect human faces in an image based on 
 
 <img src="https://github.com/MelbouVP/recognize-AI/blob/master/readme_assets/RecognizeAI-2.png" />
 
-**Application live-demo can be seen at @@@@@**
+**Application live-demo can be seen at https://recognize-ai.herokuapp.com/**
 
 ## Table of contents 
 * [Introduction](#introduction)
